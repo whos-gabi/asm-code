@@ -1,3 +1,6 @@
+# x86 asembly code 
+# RUN: gcc -c hello.s -o hello.o && gcc -no-pie hello.o -o hello && ./hello
+#
 .data
 	str: .asciz "Hello world\n"
 .text

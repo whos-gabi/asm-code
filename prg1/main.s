@@ -1,5 +1,11 @@
+# x86 asembly code AT&T
+# RUN: gcc -no-pie main.o -o main && ./main
+#TEST
 .data
-	str: .asciz "Hello world\n"
+	// str: .asciz "Hello world\n"
+	str: .asciz "Hello\n"
+    #declare a number 
+    nr: .long 48384
 .text
 .global main
 main:
