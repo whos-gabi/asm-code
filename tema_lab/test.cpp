@@ -81,6 +81,15 @@ int countVecini(int i, int j)
 void evolutie(int g)
 {
     // se va face g evolutii dupa regulile de mai sus
+    //loop k times
+    //copy matrix in cp_matrix
+    //loop elements in matrix
+    //count neighbours
+    //if matrix(elem)==1 && neighbours < 2 or neighbours > 3 set cp_matrix[i][j] = 0
+    //else neighbours == 3 set cp_matrix[i][j] = 1
+    // reset vecini
+    // copy cp_matrix in matrix
+    // end loop
     for (int i = 1; i <= g; i++)
     {
         // copy matrix

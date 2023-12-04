@@ -14,16 +14,18 @@
     j: .space 4
     // define matrix
     matrix: .space 400 
-    //
+    cp_matrix: .space 400
+    // define 
+    element: .space 4
+    vecini: .space 4
+    //lineIdx and colIdx
     lineIdx: .space 4
     colIdx: .space 4
     // define format strings
     formatScanf: .asciz "%d" # Input format string
-    formatPrintf: .asciz "%d \n" # Output format string
+    // formatPrintf: .asciz "%d \n" # Output format string
     mx_printf: .asciz "%d " # Output format string
-    formatXuy: .asciz "%d %d %d\n" # Output format string
     endl: .asciz "\n" # Output format string
-    output_str: .asciz "Xuinea: %s\n"  # Output format string
 .text
 .global main
 main:
@@ -119,7 +121,6 @@ cirire2:
     push $formatScanf
     call scanf
     add $8, %esp
-
    
     jmp print_matrix
 
@@ -147,7 +148,7 @@ print_matrix:
     for_lines:
         mov lineIdx, %ecx
         cmp m, %ecx
-        jg et_exit
+        jg evolution
         movl $1, colIdx # colIdx = 0
         for_cols:
             mov colIdx, %ecx
@@ -170,6 +171,67 @@ print_matrix:
             addl colIdx, %eax
             incl colIdx
             jmp for_cols
+
+count_vecini:
+    // go to $element in matrix
+    // and count vecini in cp_matrix
+    /*
+    0 0 0
+    0 e 0
+    0 0 0
+    */ 
+    // count x,y for element in matrix
+    /*
+    if (a[i - 1][j - 1])
+        nrVecini++;
+    if (a[i - 1][j])
+        nrVecini++;
+    if (a[i - 1][j + 1])
+        nrVecini++;
+    if (a[i][j - 1])
+        nrVecini++;
+    if (a[i][j + 1])
+        nrVecini++;
+    if (a[i + 1][j - 1])
+        nrVecini++;
+    if (a[i + 1][j])
+        nrVecini++;
+    if (a[i + 1][j + 1])
+        nrVecini++;
+    */
+    //count:
+    
+
+
+evolution:
+    // print endl
+    pushl $endl
+    call printf
+    add $4, %esp
+
+    // loop k times
+    mov $0, %ecx
+    for_k:
+        cmp k, %ecx
+        je et_exit
+
+        // TODO: Copy matrix to cp_matrix
+        movl m, %eax
+        addl $2, %eax
+        movl %eax, %ebx     # ebx = m + 2
+
+        movl n, %eax
+        addl $2, %eax
+        imull %eax, %ebx    # ebx = (n + 2) * (m + 2)
+
+        movl $matrix, %esi
+        movl $cp_matrix, %edi
+        //TODO copy matrix to cp_matrix
+
+        // End loop
+        add $1, %ecx
+        jmp for_k
+
 
 
 et_exit:
