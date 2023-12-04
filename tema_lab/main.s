@@ -30,75 +30,6 @@ main:
     jmp citire1 # citire brat 
 
 
-fill_matrix:
-    // multiply n+2 with m+2
-    movl m, %eax
-    addl $2, %eax
-    movl %eax, %ebx # ebx = m+2
-
-
-    movl n, %eax
-    addl $2, %eax
-    imull %ebx, %eax # eax = (n+2)*(m+2)
-    movl %eax, %ebx
-
-
-    movl $0, %ecx
-    mov $matrix, %edi
-    for_fill_matrix:
-        cmpl %ebx, %ecx
-        je print_matrix #jg?
-        movl $0, matrix(,%ecx,4)
-        addl $1, %ecx # i++
-        jmp for_fill_matrix
-
-
-cout_for_lines:
-    pushl $endl
-    call printf
-    add $4, %esp
-    incl lineIdx
-    jmp for_lines
-
-print_matrix:
-    // for i<=n*m printf matrix[i]" " and add endl at the end of the line
-    movl m, %eax
-    movl n, %ebx
-    imull %ebx, %eax # eax = n*m
-    movl %eax, %ebx
-
-    pushl %ebx
-    pushl $formatPrintf # print n*m
-    call printf
-    add $8, %esp
-
-    movl $1, lineIdx # lineIdx = 0
-    for_lines:
-        mov lineIdx, %ecx
-        cmp m, %ecx
-        jg et_exit
-        movl $1, colIdx # colIdx = 0
-        for_cols:
-            mov colIdx, %ecx
-            cmp n, %ecx
-            jg cout_for_lines
-
-            mov lineIdx, %eax
-            imull n, %eax
-            addl colIdx, %eax
-            
-            pusha
-            pushl matrix(,%eax,4)
-            pushl $mx_printf
-            call printf
-            add $8, %esp
-            popa
-
-            mov lineIdx, %eax
-            imull n, %eax
-            addl colIdx, %eax
-            incl colIdx
-            jmp for_cols
 
 citire1:
     push $m # citire m
@@ -110,6 +41,29 @@ citire1:
     push $formatScanf
     call scanf
     add $8, %esp
+
+fill_matrix:
+    // multiply n+2 with m+2
+    movl m, %eax
+    addl $2, %eax
+    movl %eax, %ebx # ebx = m+2
+
+    movl n, %eax
+    addl $2, %eax
+    imull %ebx, %eax # eax = (n+2)*(m+2)
+    movl %eax, %ebx
+
+
+    movl $0, %ecx
+    mov $matrix, %edi
+    for_fill_matrix:
+        cmpl %ebx, %ecx
+        je xuy1 #jg?
+        movl $0, matrix(,%ecx,4)
+        addl $1, %ecx # i++
+        jmp for_fill_matrix
+
+    xuy1:
 
     push $p # citire p
     push $formatScanf
@@ -144,23 +98,15 @@ citire1:
         movl $0, %eax    # Assuming each element is a 32-bit integer
         movl $0, %edx
         incl i
-        incl j
         movl i, %ebx       # Use movl instead of mov to load the value from variable i
         imull n, %ebx      # Use %ebx instead of ebx
         addl j, %ebx       # Use addl instead of add to perform the addition
         addl $1, %ebx      # Add 1 to the calculated value
         movl %ebx, %edx    # Move the result to %edx (assuming it's the index)
 
-
-
         # Set matrix[x][y] = 1
         movl $1, matrix(,%edx,4)
 
-
-        // pushl %ecx
-        // pushl $formatPrintf
-        // call printf
-        // add $8, %esp
         popa
         #end xuynea
         add $1, %ecx
@@ -175,14 +121,56 @@ cirire2:
     add $8, %esp
 
    
-    jmp fill_matrix
-
-    
+    jmp print_matrix
 
 
-    // jmp et_exit
-    # for p times read x and y and set matrix[x][y] = 1
-    
+cout_for_lines:
+    pushl $endl
+    call printf
+    add $4, %esp
+    incl lineIdx
+    jmp for_lines
+
+print_matrix:
+    // for i<=n*m printf matrix[i]" " and add endl at the end of the line
+    movl m, %eax
+    movl n, %ebx
+    imull %ebx, %eax # eax = n*m
+    movl %eax, %ebx
+
+    // pushl %ebx
+    // pushl $formatPrintf # print n*m
+    // call printf
+    // add $8, %esp
+
+    movl $1, lineIdx # lineIdx = 0
+    for_lines:
+        mov lineIdx, %ecx
+        cmp m, %ecx
+        jg et_exit
+        movl $1, colIdx # colIdx = 0
+        for_cols:
+            mov colIdx, %ecx
+            cmp n, %ecx
+            jg cout_for_lines
+
+            mov lineIdx, %eax
+            imull n, %eax
+            addl colIdx, %eax
+            
+            pusha
+            pushl matrix(,%eax,4)
+            pushl $mx_printf
+            call printf
+            add $8, %esp
+            popa
+
+            mov lineIdx, %eax
+            imull n, %eax
+            addl colIdx, %eax
+            incl colIdx
+            jmp for_cols
+
 
 et_exit:
     #exit naxui damoi
