@@ -17,19 +17,19 @@ int g;    // numarul de generatii
 int p;    // numarul de celule vii
 bool a[100][100];
 
-// void bordare()
-// {
-//     for (int i = 0; i <= n + 1; i++)
-//     {
-//         a[0][i] = 0;
-//         a[n + 1][i] = 0;
-//     }
-//     for (int i = 0; i <= m + 1; i++)
-//     {
-//         a[i][0] = 0;
-//         a[i][m + 1] = 0;
-//     }
-// }
+void bordare()
+{
+    for (int i = 0; i <= n + 1; i++)
+    {
+        a[0][i] = 0;
+        a[n + 1][i] = 0;
+    }
+    for (int i = 0; i <= m + 1; i++)
+    {
+        a[i][0] = 0;
+        a[i][m + 1] = 0;
+    }
+}
 
 void afisare(bool afisBordata = false)
 {
@@ -81,17 +81,18 @@ int countVecini(int i, int j)
 void evolutie(int g)
 {
     // se va face g evolutii dupa regulile de mai sus
-    //loop k times
-    //copy matrix in cp_matrix
-    //loop elements in matrix
-    //count neighbours
-    //if matrix(elem)==1 && neighbours < 2 or neighbours > 3 set cp_matrix[i][j] = 0
-    //else neighbours == 3 set cp_matrix[i][j] = 1
+    // loop k times
+    // copy matrix in cp_matrix
+    // loop elements in matrix
+    // count neighbours
+    // if matrix(elem)==1 && neighbours < 2 or neighbours > 3 set cp_matrix[i][j] = 0
+    // else neighbours == 3 set cp_matrix[i][j] = 1
     // reset vecini
     // copy cp_matrix in matrix
     // end loop
     for (int i = 1; i <= g; i++)
     {
+        cout << endl;
         // copy matrix
         int b[100][100];
         for (int i = 1; i <= n; i++)
@@ -100,31 +101,38 @@ void evolutie(int g)
 
         // se va face o evolutie
         for (int i = 1; i <= n; i++)
+        {
             for (int j = 1; j <= m; j++)
             {
+
+                // LOGIC HERE
                 int nrVecini = countVecini(i, j);
-                if (a[i][j] == 1)
+
+                cout << nrVecini << " ";
+
+                if (a[i][j] == 1) // alive
                 {
-                    if (nrVecini < 2)
+                    if (nrVecini < 2) // under-population
                         b[i][j] = 0;
-                    if (nrVecini > 3)
+                    if (nrVecini > 3) // overcrowding
                         b[i][j] = 0;
                 }
-                else
+                else // dead
                 {
-                    if (nrVecini == 3)
+                    if (nrVecini == 3) // reproduction
                         b[i][j] = 1;
                 }
             }
-        
+            
+        }
+
         // copy back
         for (int i = 1; i <= n; i++)
             for (int j = 1; j <= m; j++)
                 a[i][j] = b[i][j];
 
-        
-        // cout << "Evolutia " << i << endl;
-        // afisare();
+        cout << "\nEvolutia " << i << endl;
+        afisare();
     }
 }
 
@@ -140,7 +148,7 @@ void citire()
     f >> g;
 
     f.close();
-    // bordare();
+    bordare();
 }
 
 int main()
@@ -148,7 +156,7 @@ int main()
     cout << "Pula calului cu matricile voastre" << endl;
     citire();
     afisare();
-    evolutie(g-1);
+    evolutie(g - 1);
     cout << "After evolutie\n"
          << endl;
     afisare();

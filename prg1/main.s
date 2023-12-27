@@ -1,21 +1,42 @@
 # x86 asembly code AT&T
-# RUN: gcc -no-pie main.o -o main && ./main
-#TEST
+# RUN: gcc -m32 main.s -o main -no-pie && ./main 
+# proceduri
+// f(x) = 2 * g(x)
+// g(x) = x + 1
 .data
-	// str: .asciz "Hello world\n"
-	str: .asciz "Hello\n"
-    #declare a number 
-    nr: .long 48384
+    x: .long 10
 .text
 .global main
 main:
-    #cout
-    mov $4, %eax 
-    mov $1, %ebx
-    mov $str, %ecx
-    mov $15, %edx
-    int  $0x80
+    // restaureaza stiva
+    // %ebx
+    // %edi
+    // %esi
+    // %ebp
+    // %esp
+    g:
+    push %ebp
+    mov %esp, %ebp
+    mov 8(%ebp), %eax
+    add $1, %eax
+    pop %ebp
+    ret
 
+    f:
+    push %ebp
+    mov %esp, %ebp
+    mov 8(%ebp), %eax
+    push %eax
+    call g
+    add $4, %esp
+    mov $2, %ecx
+    mul %ecx
+    pop %ebp
+    ret
+
+
+    
+    
     #return 0
     mov $1, %eax 
     mov $0, %ebx
