@@ -1,43 +1,47 @@
-# x86 asembly code AT&T
-# RUN: gcc -m32 main.s -o main -no-pie && ./main 
-# proceduri
-// f(x) = 2 * g(x)
-// g(x) = x + 1
+# gcc -m32 main.s -o main -no-pie && ./main
 .data
-    x: .long 10
+inputFilename: .asciz "in.txt"
+readMode: .asciz "r"
+formatStr: .asciz "%d"
+outputStr: .asciz "%d\n"
+fin: .long 0
+n: .space 4
+
 .text
 .global main
 main:
-    // restaureaza stiva
-    // %ebx
-    // %edi
-    // %esi
-    // %ebp
-    // %esp
-    g:
-    push %ebp
-    mov %esp, %ebp
-    mov 8(%ebp), %eax
-    add $1, %eax
-    pop %ebp
-    ret
+     # Open input file for reading
+    pushl $readMode
+    pushl $inputFilename
+    call fopen
+    add $8, %esp
+    mov %eax, fin           # Save file pointer
+  
+    # Read digit from file
+    pushl $n
+    pushl $formatStr
+    pushl fin
+    call fscanf
+    add $12, %esp
 
-    f:
-    push %ebp
-    mov %esp, %ebp
-    mov 8(%ebp), %eax
+    # Increment n
+    movl n, %eax
+    addl $1, %eax
+    movl %eax, n
+
+    # Print n+1 to console
     push %eax
-    call g
+    push $outputStr
+    call printf
+    add $8, %esp
+
+exit:
+    # Close file
+    push fin #also add fout if used
+    call fclose
     add $4, %esp
-    mov $2, %ecx
-    mul %ecx
-    pop %ebp
-    ret
 
-
-    
-    
-    #return 0
-    mov $1, %eax 
-    mov $0, %ebx
-    int  $0x80
+    # Exit
+    movl $1, %eax
+    xorl %ebx, %ebx
+    int $0x80

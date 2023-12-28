@@ -1,5 +1,4 @@
-# gcc -c main.s -o main.o && gcc -no-pie main.o -o main && ./main < input.txt
-# gcc -m32 main.s -o main -no-pie && ./main < input.txt 
+# gcc -m32 142_Baghici_GabrielCristian_0.s -o 142_Baghici_GabrielCristian_0 -no-pie && ./142_Baghici_GabrielCristian_0 < input.txt 
 # < input.txt
 # Life game in assembly final project
 .data
