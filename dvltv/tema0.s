@@ -1,4 +1,4 @@
-# gcc -m32 main.s -o main -no-pie && ./main < input.txt 
+# gcc -m32 tema0.s -o tema0 -no-pie && ./tema0 < input.txt 
 .data
     fScanf: .asciz "%d"
     endl: .asciz "\n" 

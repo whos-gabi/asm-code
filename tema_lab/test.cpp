@@ -92,7 +92,7 @@ void evolutie(int g)
     // end loop
     for (int i = 1; i <= g; i++)
     {
-        // cout << endl;
+        cout << endl;
         // copy matrix
         int b[100][100];
         for (int i = 1; i <= n; i++)
@@ -108,7 +108,7 @@ void evolutie(int g)
                 // LOGIC HERE
                 int nrVecini = countVecini(i, j);
 
-                // cout << nrVecini << " ";
+                cout << nrVecini << " ";
 
                 if (a[i][j] == 1) // alive
                 {
@@ -131,8 +131,8 @@ void evolutie(int g)
             for (int j = 1; j <= m; j++)
                 a[i][j] = b[i][j];
 
-        // cout << "\nEvolutia " << i << endl;
-        // afisare();
+        cout << "\nEvolutia " << i << endl;
+        afisare();
     }
 }
 
@@ -153,12 +153,12 @@ void citire()
 
 int main()
 {
-    // cout << "Pula calului cu matricile voastre" << endl;
+    cout << "Fmm de matrici" << endl;
     citire();
-    // afisare();
+    afisare();
     evolutie(g - 1);
-    // cout << "After evolutie\n"
-    //      << endl;
+    cout << "After evolutie\n"
+         << endl;
     afisare();
 
     // criptare();

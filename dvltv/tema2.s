@@ -1,6 +1,6 @@
-# gcc -m32 main.s -o main -no-pie && ./main < input.txt 
+# gcc -m32 tema2.s -o tema2 -no-pie && ./tema2
 .data
-    fScanf: .asciz "%d"
+    fmtScanf: .asciz "%d"
     endl: .asciz "\n" 
     fPrintf: .asciz "%d " 
     
@@ -25,19 +25,49 @@
     x: .space 4
     y: .space 4
 
-    
+    #operatii cu fisiere
+    fisIntrare: .asciz "in.txt"
+    fisIesire: .asciz "out.txt"
+    #cod de citire sau scriere
+    modCitire: .asciz "r"
+    modScriere: .asciz "w"
+    #continutul fisierului
+    fin: .long 0
+    fout: .long 0    
 .text
 .global main
 main:
-    push $m 
-    push $fScanf
-    call scanf
+    #deschidere fisier pentru citire
+    push $modCitire
+    push $fisIntrare
+    call fopen
     add $8, %esp
+    mov %eax, fin
+
+    #deschidere fisier pentru scriere
+    push $modScriere
+    push $fisIesire
+    call fopen
+    add $8, %esp
+    mov %eax, fout
+
+    #citesc m si n
+    push $m 
+    push $fmtScanf
+    push fin 
+    call fscanf
+    pop %eax
+    pop %eax
+    pop %eax
 
     push $n 
-    push $fScanf
-    call scanf
-    add $8, %esp
+    push $fmtScanf
+    push fin 
+    call fscanf
+    pop %eax
+    pop %eax
+    pop %eax
+
 
     movl m, %eax
     addl $2, %eax
@@ -58,18 +88,20 @@ main:
         jmp border_mx
 
     bmxok:
-
-    push $p 
-    push $fScanf
-    call scanf
-    add $8, %esp
+    
+    push $p # citire p
+    push $fmtScanf
+    push fin
+    call fscanf
+    add $12, %esp
 
     call citeste_celule
 
     push $k
-    push $fScanf
-    call scanf
-    add $8, %esp
+    push $fmtScanf
+    push fin
+    call fscanf
+    add $12, %esp
 
     jmp evolutie
 
@@ -81,16 +113,18 @@ citeste_celule:
 
         pusha
         push $i
-        push $fScanf
-        call scanf
-        add $8, %esp
+        push $fmtScanf
+        push fin
+        call fscanf
+        add $12, %esp
         popa
 
         pusha
         push $j
-        push $fScanf
-        call scanf
-        add $8, %esp
+        push $fmtScanf
+        push fin
+        call fscanf
+        add $12, %esp
         popa
 
         movl i, %eax
@@ -301,7 +335,9 @@ print:
             movl (%edi), %eax            
             pushl %eax                   
             pushl $fPrintf             
-            call printf                  
+            pushl fout            
+            call fprintf                  
+            pop %eax
             pop %eax
             pop %eax
             popa                
@@ -311,12 +347,19 @@ print:
 
         cout_for_lines:
             pushl $endl   
-            call printf   
-            popl %ebx
+            pushl fout
+            call fprintf   
+            addl $8, %esp
             incl x  
             jmp for_lines 
 
     et_exit:
+        #inchide fisier de intrare si de iesire
+        push fin 
+        push fout 
+        call fclose
+        add $4, %esp
+        #iesire din program
         mov  $1,     %eax
         mov  $0,     %ebx
         int  $0x80
