@@ -1,6 +1,5 @@
-# gcc -m32 142_Baghici_GabrielCristian_0.s -o 142_Baghici_GabrielCristian_0 -no-pie && ./142_Baghici_GabrielCristian_0 < input.txt 
-# < input.txt
-# Life game in assembly final project
+# gcc -m32 part_2.s -o part_2 -no-pie && ./part_2
+# Life game in assembly final project task 0x02
 .data
     m: .space 4
     n: .space 4
@@ -23,9 +22,23 @@
     formatScanf: .asciz "%d"
     endl: .asciz "\n" 
     fPrintf: .asciz "%d " 
+
+    inputFilename: .asciz "in.txt"
+    outputFilename: .asciz "out.txt"
+    readMode: .asciz "r"
+    writeMode: .asciz "w"
+    fin: .long 0
+    fout: .long 0
 .text
 .global main
 main:
+    //open input file for reading
+    push $readMode
+    push $inputFilename
+    call fopen
+    add $8, %esp
+    mov %eax, fin
+
     jmp citire1 # citire brat 
 
 
@@ -33,13 +46,15 @@ main:
 citire1:
     push $m # citire m
     push $formatScanf
-    call scanf
-    add $8, %esp
+    push fin 
+    call fscanf
+    add $12, %esp
 
     push $n # citire n
     push $formatScanf
-    call scanf
-    add $8, %esp
+    push fin 
+    call fscanf
+    add $12, %esp
 
 fill_matrix:
     movl m, %eax
@@ -65,8 +80,9 @@ fill_matrix:
 
     push $p # citire p
     push $formatScanf
-    call scanf
-    add $8, %esp
+    push fin
+    call fscanf
+    add $12, %esp
     
     mov $0, %ecx
     for_fill:
@@ -77,16 +93,18 @@ fill_matrix:
         pusha
         push $i
         push $formatScanf
-        call scanf
-        add $8, %esp
+        push fin
+        call fscanf
+        add $12, %esp
         popa
 
         # Read j
         pusha
         push $j
         push $formatScanf
-        call scanf
-        add $8, %esp
+        push fin
+        call fscanf
+        add $12, %esp
         popa
 
         # Calculate the index in the matrix
@@ -110,8 +128,9 @@ fill_matrix:
 citire2:
     push $k
     push $formatScanf
-    call scanf
-    add $8, %esp
+    push fin
+    call fscanf
+    add $12, %esp
    
     jmp evolution
 
@@ -334,6 +353,13 @@ evolution:
 
 
 print_matrix:
+    push $writeMode
+    push $outputFilename
+    call fopen
+    add $8, %esp
+    mov %eax, fout
+
+
     movl $1, lineIdx  
     for_lines:
         mov lineIdx, %ecx
@@ -363,26 +389,34 @@ print_matrix:
             leal matrix(,%eax,4), %edi   
             movl (%edi), %eax            
             pushl %eax                   
-            pushl $fPrintf             
-            call printf                  
-            addl $8, %esp
+            pushl $fPrintf 
+            pushl fout            
+            call fprintf                  
+            addl $12, %esp
             popa                
 
             incl colIdx   
             jmp for_cols  
 
 cout_for_lines:
-    pushl $endl   
-    call printf   
-    addl $4, %esp 
+    pushl $endl 
+    pushl fout  
+    call fprintf   
+    addl $8, %esp 
     incl lineIdx  
     jmp for_lines 
 
 et_exit:
+    #close input file and output file
     pushl $0
     call fflush
     popl %ebx
-    
+
+    push fin 
+    push fout 
+    call fclose
+    add $4, %esp
+
     mov  $1,     %eax
     mov  $0,     %ebx
     int  $0x80       

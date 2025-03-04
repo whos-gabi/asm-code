@@ -1,5 +1,5 @@
-# gcc -m32 142_Baghici_GabrielCristian_0.s -o 142_Baghici_GabrielCristian_0 -no-pie && ./142_Baghici_GabrielCristian_0 < input.txt 
-# < input.txt
+# gcc -m32 part_1.s -o part_1 -no-pie && ./part_1 < input.txt 
+# Encription and decription
 # Life game in assembly final project
 .data
     m: .space 4
@@ -22,7 +22,13 @@
     // define format strings
     formatScanf: .asciz "%d"
     endl: .asciz "\n" 
-    fPrintf: .asciz "%d " 
+    fPrintf: .asciz "%d"
+    formatMesssage: .asciz "%s"
+
+
+    
+    rocketOption: .space 4
+    message: .space 256
 .text
 .global main
 main:
@@ -109,6 +115,17 @@ fill_matrix:
 
 citire2:
     push $k
+    push $formatScanf
+    call scanf
+    add $8, %esp
+
+    push $rocketOption
+    push $formatScanf
+    call scanf
+    add $8, %esp
+
+    //read string  message 
+    push $message
     push $formatScanf
     call scanf
     add $8, %esp
@@ -334,21 +351,21 @@ evolution:
 
 
 print_matrix:
-    movl $1, lineIdx  
+    movl $0, lineIdx  
     for_lines:
         mov lineIdx, %ecx
         movl m, %ebx     
         addl $1, %ebx    
         cmpl %ebx, %ecx  
-        jge et_exit      
-        movl $1, colIdx  
-
+        jg spacex_engine      
+        
+        movl $0, colIdx  
         for_cols:
             mov colIdx, %ecx  
             movl n, %ebx      
             addl $1, %ebx     
             cmpl %ebx, %ecx   
-            jge cout_for_lines
+            jg cout_for_lines
 
             # Calculate linear index for printing
             mov lineIdx, %eax        
@@ -366,23 +383,46 @@ print_matrix:
             pushl $fPrintf             
             call printf                  
             addl $8, %esp
+            // flush 
+            pushl $0
+            call fflush
+            addl $4, %esp
+
+
             popa                
 
             incl colIdx   
             jmp for_cols  
 
 cout_for_lines:
+   
+    incl lineIdx  
+    jmp for_lines 
+
+spacex_engine:
     pushl $endl   
     call printf   
     addl $4, %esp 
-    incl lineIdx  
-    jmp for_lines 
+
+    // print message 
+    push message
+    push $fPrintf
+    call printf
+    add $8, %esp    
+
+
+
+
+    jmp et_exit
+
+
+
 
 et_exit:
     pushl $0
     call fflush
     popl %ebx
-    
+
     mov  $1,     %eax
     mov  $0,     %ebx
     int  $0x80       
